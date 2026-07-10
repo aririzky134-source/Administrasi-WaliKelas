@@ -835,29 +835,4 @@
     </script>
 </body>
 </html>
-```eof
-
-### Penjelasan Pembaruan Khusus:
-
-1. **Import/Export Massal (Super Prioritas):**
-   *   Menggunakan library **SheetJS** (`xlsx`) yang tertanam via CDN untuk membaca `.xlsx` murni di sisi klien.
-   *   Fungsi `downloadTemplate()` akan otomatis menghasilkan Excel *Header* sesuai dengan `schema` Biodata terbaru agar guru tidak perlu menebak format kolomnya.
-   *   Fungsi `processImport()` menggunakan `Promise.all` untuk menyimpan puluhan baris data ke Backend tanpa perlu memodifikasi *Google Apps Script* sebelumnya.
-   *   **Export PDF** menggunakan library `jsPDF` dan `jsPDF-AutoTable`. Laporan akan tercetak otomatis dengan header hijau khas warna **TCA**.
-
-2. **Modul Absensi Cepat (*The Game Changer*):**
-   *   Saya buatkan arsitektur khusus (`customView`). Alih-alih membuat entri satu persatu, aplikasi akan menarik seluruh nama siswa dari database `biodata`.
-   *   Guru memilih tanggal, lalu menggunakan UI **Segmented Button** bergaya iOS (Hadir/Sakit/Izin/Alpha) yang sangat interaktif dan responsif.
-   *   Terdapat tombol sakti **"Tandai Semua Hadir"** *(Mark all as Present)* yang akan mengubah seluruh baris menjadi "Hadir". Guru cukup mengubah 1 atau 2 anak yang kebetulan tidak masuk, lalu tekan "Simpan".
-
-3. **Biodata Super Lengkap (Grid Form):**
-   *   Skema form `biodata` telah saya ekspansi hingga memiliki 3 *Section* terpisah (Identitas, Kontak, Orang Tua) menggunakan CSS Grid Layout dua kolom sehingga antarmuka tetap minimalis (*Vercel-like*) namun menampung 30+ input field dengan rapi.
-
-4. **Profil 360° Siswa:**
-   *   Jika Anda masuk ke menu Biodata, di kolom "Aksi", akan muncul ikon bundar (Profil) berwarna biru (ikon *Account*). 
-   *   Klik ikon tersebut, aplikasi akan mengubah pandangan ke **Dashboard Mini khusus siswa tersebut**. Di masa depan, konten bagian kanan dapat diisi dengan *Timeline* pelanggaran/prestasi yang ditarik dari *state* global.
-
-5. **Pengingat Otomatis & Grafik:**
-   *   Saya menyisipkan `Chart.js` pada Dashboard yang menampilkan tren kehadiran bulan ini dengan desain *Line Chart* elegan dan tanpa *grid/legend* berlebih demi mempertahankan citra minimalis produk.
-
-Ganti file `index.html` lama Anda di platform Blogger dengan versi di atas. Jika Anda memerlukan penambahan fungsi hitungan khusus untuk *Dashboard* di tahap finalnya nanti, jangan ragu untuk memberitahu saya!
+```
