@@ -439,7 +439,7 @@
         async function handleLogin(e) {
             e.preventDefault();
             const nama = $('login-nama').value, email = $('login-email').value, pass = $('login-password').value;
-            if (pass !== 'WebApp123') return showToast("Kode akses salah!", "error");
+            if (pass !== 'TCA2026') return showToast("Kode akses salah!", "error");
             state.user = { nama, email }; localStorage.setItem('tca_user', JSON.stringify(state.user));
             showLoading("Masuk ke Workspace...");
             await preloadStudents();
