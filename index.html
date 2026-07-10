@@ -660,6 +660,34 @@
             try {
                 // In real prod with GAS, you'd modify GAS to accept array payload.
                 // Doing loop here for demo purpose as requested to not break old GAS.
+
+                const schema = MODULES[state.importTarget].schema;
+
+const normalizedData = sheetData.map(row => {
+    const newRow = {};
+
+    schema.forEach(field => {
+        if (!field.key) return;
+
+        const excelKey = Object.keys(row).find(
+            k => k.toLowerCase().trim() === field.label.toLowerCase().trim()
+        );
+
+        newRow[field.key] = excelKey ? row[excelKey] : '';
+    });
+
+    return newRow;
+});
+
+await Promise.all(
+    normalizedData.map(row =>
+        apiFetch('create', {
+            endpoint: MODULES[state.importTarget].endpoint,
+            data: row
+        })
+    )
+);
+                
                 await Promise.all(dataToSave.map(d => apiFetch('create', { endpoint: 'attendance', data: d })));
                 hideLoading();
                 showToast("Absensi berhasil disimpan!");
@@ -840,15 +868,55 @@
                 
                 showLoading(`Mengimport ${sheetData.length} baris data...`);
                 try {
-                    await Promise.all(sheetData.map(row => apiFetch('create', { endpoint: MODULES[state.importTarget].endpoint, data: row })));
-                    hideLoading(); showToast("Import massal berhasil!");
-                    if(state.importTarget === 'biodata') preloadStudents();
-                    fetchData(state.importTarget);
-                } catch(err) { hideLoading(); showToast("Gagal import data", "error"); }
-            };
-            reader.readAsArrayBuffer(file);
-        }
+                   .all(
+    sheetData.map(row => {
 
+        const mappedData = {};
+
+        Object.keys(row).forEach(excelColumn => {
+
+            const normalized = excelColumn
+                .toLowerCase()
+                .trim();
+
+            for (const systemField in FIELD_MAPPING) {
+
+                if (
+                    FIELD_MAPPING[systemField]
+                    .includes(normalized)
+                ) {
+
+                    mappedData[systemField] =
+                        row[excelColumn];
+
+                }
+
+            }
+
+        });
+
+        return apiFetch('create', {
+            endpoint: MODULES[state.importTarget].endpoint,
+            data: mappedData
+        });
+
+    })
+);
+
+        const FIELD_MAPPING = {
+    nama: ["nama", "nama lengkap", "nama siswa", "nama murid"],
+    nis: ["nis", "nomor induk", "nomor induk siswa"],
+    nisn: ["nisn"],
+    jk: ["jenis kelamin", "jk", "l/p", "gender"],
+    kelas: ["kelas", "rombel"],
+    alamat: ["alamat", "alamat rumah"],
+    agama: ["agama"],
+    nama_ayah: ["nama ayah", "ayah"],
+    nama_ibu: ["nama ibu", "ibu"],
+    hp_ayah: ["no hp ayah", "hp ayah", "wa ayah"],
+    hp_ibu: ["no hp ibu", "hp ibu", "wa ibu"]
+};
+        
         function exportData(type) {
             const mod = MODULES[state.currentModule];
             if(state.data.length === 0) return showToast("Tidak ada data untuk diexport", "error");
